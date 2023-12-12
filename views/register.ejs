@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./partials/head.ejs') %>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    <div>
+        <h2>Register</h2>
+        <form class="create-user" action="/user/register/create" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
+            <div id="submitbox">
+                <button id="register-submit" >Submit</button>
+            </div>
+        </form>
+    </div>
+    <%- include('./partials/footer.ejs')  %>
+</body>
+<script>
+    const registerSubmit = document.getElementById('register-submit');
+
+    registerSubmit.addEventListener('click', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        if(!username || !password) return alert('Please enter a username and password');
+        const data = {
+            username,
+            password
+        };
+        fetch('/user/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) { // if the response is successful, redirect to the home page
+                window.location.href = data.redirect;
+            } else { // if the response is unsuccessful, alert the user
+                alert(data.message)
+            }})
+        .catch(err => console.log(err));
+    })
+</script>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./partials/head.ejs') %>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    <h2>List of all users</h2>
+    <hr>
+    <div id="users-box">
+        <% if(users.length > 0) { %>
+            <% for(i = 0; i < users.length; i++) { %>
+                <div class="users">
+                    <h3>User <%= i+1 %></h3>
+                    <p>Username: <%= users[i].username %> </p>
+                    <p>Password: <%= users[i].password %> </p>
+                    <p>ID: <%= users[i]._id %></p>
+                    <button data-id="<%=users[i]._id%>" data-name="<%=users[i].username%>">Delete User</button>
+                    <hr>
+                </div>
+            <% } %>
+        <% } else { %>
+            <h3> No users</h3>
+        <% } %>
+    </div>
+    
+    <%- include('./partials/footer.ejs')  %>
+</body>
+<script>
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    const deleteButtons = document.querySelectorAll("button")
+    const buttonDefaultText = 'Delete User'
+    const buttonConfirmText = ' Are you sure? '
+
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            if(button.innerText == buttonDefaultText) { //To double check
+                button.innerText = buttonConfirmText;
+                sleep(5000).then(() => {button.innerText = buttonDefaultText})
+            } else {
+                const url = `/user/delete/${button.dataset.id}`
+
+                fetch(url, {
+                    method: 'DELETE'
+                })
+                .then((res) => res.json())
+                .then((res) => {window.location.href = res.redirect}) // Redirect user to the url from the response
+                .catch((err) => {console.log(err)});
+            }
+        });
+    })
+</script>
+</html>
