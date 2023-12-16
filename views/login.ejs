@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./partials/head.ejs') %>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    <div>
+        <h2>Login</h2>
+        <form class="create-user" action="/user/register/create" method="POST">
+            <p id="error-text"></p>
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
+            <p><a id="register-anchor" href="/register">Don't have an account? Register</a></p>
+            <div id="submitbox">
+                <button id="login-submit">Login</button>
+            </div>
+        </form>
+    </div>
+    <%- include('./partials/footer.ejs')  %>
+</body>
+<script>
+    const loginSubmit = document.getElementById('login-submit');
+
+    loginSubmit.addEventListener('click', async (e) => {
+        e.preventDefault(); // prevent the form from submitting, which is the default behavior of a button in a form
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        if(!username || !password) return alert('Please enter a username and password');
+        const body = {
+            username,
+            password
+        };
+
+        const res = await fetch('/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body),
+        })
+
+        let data = await res.json();
+        if (data.success) {
+            window.location.href = data.redirect;
+        } else { 
+            showError(data.message);
+        }
+    })
+
+
+    const showError = (message) => {
+        const error = document.getElementById('error-text');
+        error.innerText = message;
+        error.style.display = 'block';
+    }
+</script>
+</html>

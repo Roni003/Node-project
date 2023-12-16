@@ -71,6 +71,12 @@
       margin: 0 auto;
     }
 
+    #error-text {
+      color: red;
+      font-size: 1em;
+      margin-bottom: 10px;
+    }
+
     .create-user input,
     .create-user textarea{
       display: block;
@@ -94,6 +100,10 @@
       font-size: 1.2em;
       cursor: pointer;
       justify-content: center;
+    }
+
+    #register-anchor, #login-anchor, #register-anchor::before, #login-anchor::before, #register-anchor::after, #login-anchor::after {
+        color:crimson;
     }
 
     form #submitbox {

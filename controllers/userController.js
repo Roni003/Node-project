@@ -1,46 +1,49 @@
 const config = require('../config.js');
 const express = require('express');
 const User = require('../models/user.js');
-const { encrypt, decrypt, addUser} = require('../func.js');
+const { addUser, createJWT } = require('../func.js');
 
-const user_get_all = (req, res) => {
-    User.find().sort({createdAt: -1})
-    .then((users) => {
-        users = decrypt(users)
-        res.render('users', { title: 'Users', users})
-    })
-    .catch((err) => {console.log(err)})
+// Display all users
+const user_get_all = async (req, res) => {
+    try {
+        const users = await User.find().sort({createdAt: -1})
+        if(!users) {
+            res.status(404).render('404', {  title: '404'})
+            return
+        }
+        res.render('users', { title: 'Users', users: users, searchValue: ''})
+    } catch (err) {
+        console.log(err)
+    }
 };
 
-const user_get_register = (req, res) => {
-    res.render('register', { title: 'Register'})
-};
-
-const user_post_register = async (req, res) => {
-    let username = req.body.username;
-    let password = encrypt(req.body.password);
-    
-    if(await addUser(username, password)) {
-        //Set cookies to logged in.
-        res.json({ success: true, redirect: '/'})
-    } else {
-        res.json({ success: false, message: 'Username already exists.'})
+// Find user by username
+const user_get_single = async (req, res) => {
+    try {
+        const user = await User.find({ username: new RegExp('^'+req.params.username+'$', "i")})
+        if(!user) {
+            res.status(404).render('404', { title: '404'})
+            return
+        }
+        res.render('users', { title: req.params.username, users: user, searchValue: req.params.username})
+    } catch (err) {
+        console.log(err)
     }
 }
 
+// Handle delete user request
 const user_delete = (req,res) => {
     id = req.params.id
     User.findByIdAndDelete(id)
     .then((data) => {
-        res.json({ redirect: '/user/list'})
+        res.json({ redirect: '/users/get'})
     })
     .catch((err) => {console.log(err)});
 };
 
 module.exports = {
     user_get_all,
-    user_get_register,
-    user_post_register,
+    user_get_single,
     user_delete
 }
 

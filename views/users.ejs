@@ -4,6 +4,9 @@
 <body>
     <%- include('./partials/nav.ejs') %>
     <h2>List of all users</h2>
+    <input type="text" id="search-box" placeholder="Search..." value="<%=searchValue%>">
+    <button id  ="user-search-button">Search</button>
+    <button id="reset-button">Reset</button>
     <hr>
     <div id="users-box">
         <% if(users.length > 0) { %>
@@ -13,7 +16,7 @@
                     <p>Username: <%= users[i].username %> </p>
                     <p>Password: <%= users[i].password %> </p>
                     <p>ID: <%= users[i]._id %></p>
-                    <button data-id="<%=users[i]._id%>" data-name="<%=users[i].username%>">Delete User</button>
+                    <button class="delete-buttons" data-id="<%=users[i]._id%>" data-name="<%=users[i].username%>">Delete User</button>
                     <hr>
                 </div>
             <% } %>
@@ -29,18 +32,22 @@
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    const deleteButtons = document.querySelectorAll("button")
+    const deleteButtons = document.getElementsByClassName('delete-buttons');
     const buttonDefaultText = 'Delete User'
     const buttonConfirmText = ' Are you sure? '
+    const buttonDefaultState = 0;
+    const buttonConfirmState = 1;
 
-    deleteButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            if(button.innerText == buttonDefaultText) { //To double check
-                button.innerText = buttonConfirmText;
-                sleep(5000).then(() => {button.innerText = buttonDefaultText})
+    for(i = 0; i < deleteButtons.length; i++) {
+        const button = deleteButtons[i];
+        button.state = buttonDefaultState;
+        button.addEventListener("click", async () => {
+            if(button.state == buttonDefaultState) { //To double check
+                button.state = buttonConfirmState; // Change state
+                button.innerHTML = buttonConfirmText; // Change text
+                sleep(5000).then(() => {button.state = buttonDefaultState; button.innerHTML = buttonDefaultText;});  // set to default
             } else {
-                const url = `/user/delete/${button.dataset.id}`
-
+                const url = `/users/${button.dataset.id}`
                 fetch(url, {
                     method: 'DELETE'
                 })
@@ -49,6 +56,28 @@
                 .catch((err) => {console.log(err)});
             }
         });
+    }
+
+    const searchButton = document.getElementById('user-search-button');
+    const searchBox = document.getElementById('search-box');
+    const resetButton = document.getElementById('reset-button');
+
+    searchButton.addEventListener('click', () => {
+        window.location.href = `/users/get/${searchBox.value}`;
     })
+
+    searchBox.addEventListener("keyup", (e) => {
+        if(e.key === 'Enter') {
+            window.location.href = `/users/get/${searchBox.value}`;
+        };
+    });
+
+    resetButton.addEventListener('click', () => {
+        window.location.href = '/users/get';
+    });
+
+
+
+
 </script>
 </html>

@@ -1,10 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 
 // Local imports
 const config = require('./config.js');
 const userRoutes = require('./routes/userRoutes.js');
+const authRoutes = require('./routes/authRoutes.js')
 
 // Constants
 const app = express();
@@ -21,22 +23,25 @@ app.use(express.static('public')); // Send static files in './public/'
 app.use(morgan('dev')); // Print request info
 app.use(express.urlencoded({ extended: true })) // So we can parse the body of post requests
 app.use(express.json()) // So we can parse the body of post requests
+app.use(cookieParser()) // So we can parse cookies
 
 
 
-// Display home page
+// home page
 app.get('/', (req, res) => {
-    res.status(200).render('index', { title: 'Home'})
+    res.status(200).render('index', { title: 'Home', username: ''});
 });
 
+app.use(authRoutes);
+
 // User routes (login(todo), register, view users, delete users)
-app.use(userRoutes)
+app.use(userRoutes);
 
 
 
 // 404 handler, has to be at the bottom since it responds, stopping the rest of the code below from running
 app.use((req, res) => {
-    res.status(404).render('404', { title: '404'})
+    res.status(404).render('404', { title: '404'});
 });
 
 

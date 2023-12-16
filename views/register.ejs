@@ -10,8 +10,9 @@
             <input type="text" name="username" id="username" required>
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" required>
+            <p><a id="login-anchor" href="/login">Already have an account? Login</a></p>
             <div id="submitbox">
-                <button id="register-submit" >Submit</button>
+                <button id="register-submit" >Register</button>
             </div>
         </form>
     </div>
@@ -20,28 +21,27 @@
 <script>
     const registerSubmit = document.getElementById('register-submit');
 
-    registerSubmit.addEventListener('click', (e) => {
+    registerSubmit.addEventListener('click', async (e) => {
         e.preventDefault();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         if(!username || !password) return alert('Please enter a username and password');
-        const data = {
+        const body = {
             username,
             password
         };
-        fetch('/user/register', {
+
+        const res = await fetch('/register', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data),
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) { // if the response is successful, redirect to the home page
-                window.location.href = data.redirect;
-            } else { // if the response is unsuccessful, alert the user
-                alert(data.message)
-            }})
-        .catch(err => console.log(err));
-    })
+            body: JSON.stringify(body)})
+
+        let data = await res.json();
+        if (data.success) {
+            window.location.href = data.redirect;
+        } else {
+            alert(data.message)
+        }
+    }); 
 </script>
 </html>
