@@ -91,19 +91,10 @@
     textarea{
       height: 120px;
     }
-    .create-user button{
-      margin-top: 20px;
-      background: crimson;
-      color: white;
-      padding: 8px;
-      border: 0;
-      font-size: 1.2em;
-      cursor: pointer;
-      justify-content: center;
-    }
 
     #register-anchor, #login-anchor, #register-anchor::before, #login-anchor::before, #register-anchor::after, #login-anchor::after {
         color:crimson;
+        font-size: 1.2em;
     }
 
     form #submitbox {
@@ -111,7 +102,19 @@
       justify-content: center;
     }
 
-    
+    .create-user button{
+      margin-top: 20px;
+      background: crimson;
+      color: white;
+      padding: 8px;
+      padding-left: 10px;
+      padding-right: 10px;
+      border: 0;
+      font-size: 1.2em;
+      cursor: pointer;
+      justify-content: center;
+    }
+        
     .users button {
       margin-top: 10px;
       background: crimson;

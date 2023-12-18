@@ -3,7 +3,7 @@ const express = require('express');
 const config = require('../config.js');
 const User = require('../models/user.js');
 const userController = require('../controllers/userController.js');
-const verifyToken = require('../middleware/verifyToken.js')
+const {verifyToken} = require('../middleware/auth.js')
 
 
 const router = express.Router();
