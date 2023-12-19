@@ -7,7 +7,7 @@
 
 ## Requirements
 + [Node.js](https://nodejs.org/en/download/current)
-+ [MongoDB Atlas](https://www.mongodb.com/atlas)
++ [MongoDB](https://www.mongodb.com/atlas)
 
 ## Installation
 1. Clone the repository:
