@@ -29,6 +29,31 @@ const verifyToken = (req, res, next) => {
     })
 };
 
+const verifyAdmin = (req, res, next) => {
+    const token = req.cookies.token;
+    if(!token) {
+        res.redirect('/');
+        return;
+    }
+
+    jwt.verify(token, config.jwt.key, async (err, data) => {
+        if(err) {
+            console.log('jwt verification failed: ', err.message);
+            res.redirect('/');
+            return;
+        }
+        console.log('\njwt verification successful, \ndata:', data, '\n');
+        let u = await User.findById(data.id);
+        if(u != null && config.admins.includes(u._id.toString())) {
+            next(); //Only keep going if the token exists and is valid AND user still exists.
+            return;
+        }
+        res.redirect('/');
+        return;
+    })
+};
+
+
 const getUser = async (req, res, next) => {
     const token = req.cookies.token;
 
@@ -43,6 +68,11 @@ const getUser = async (req, res, next) => {
                     let u = await User.findById(data.id);
                     console.log('Set user to:', u.username);
                     res.locals.user = u;
+                    if(config.admins.includes(u._id.toString())) {
+                        res.locals.admin = true;
+                    } else {
+                        res.locals.admin = false;
+                    }
                     next();
                 } catch (error) {
                     console.log('Token is valid, but user has been deleted recently');
@@ -57,4 +87,4 @@ const getUser = async (req, res, next) => {
     }
 }
 
-module.exports = { verifyToken ,getUser }
+module.exports = { verifyToken, verifyAdmin, getUser }

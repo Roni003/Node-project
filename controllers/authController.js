@@ -1,7 +1,7 @@
 const config = require('../config.js');
 const express = require('express');
 const User = require('../models/user.js');
-const { addUser, createJWT } = require('../func.js');
+const { createJWT } = require('../func.js');
 
 
 // Display register page
